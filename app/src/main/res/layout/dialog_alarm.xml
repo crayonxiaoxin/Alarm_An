@@ -37,14 +37,16 @@
                 android:textSize="@dimen/dp_16"
                 tools:text="我是内容。我是内容。我是内容。我是内容。我是内容。我是内容。" />
 
-            <Button
+            <TextView
                 android:id="@+id/cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_20"
-                android:background="@color/my_light_primary"
+                android:paddingHorizontal="@dimen/dp_20"
+                android:paddingVertical="@dimen/dp_8"
                 android:text="取消"
-                android:textColor="@color/white" />
+                android:textSize="@dimen/dp_16"
+                android:textColor="@color/my_light_primary" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

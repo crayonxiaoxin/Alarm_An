@@ -2,6 +2,7 @@ package com.github.crayonxiaoxin.alarmclock.utils
 
 import android.content.Context
 import android.content.Intent
+import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.net.Uri
 import kotlinx.coroutines.CoroutineScope
@@ -20,6 +21,12 @@ object AudioManager {
         job = CoroutineScope(Dispatchers.IO).launch {
             mediaPlayer.apply {
                 reset()
+                setAudioAttributes(
+                    AudioAttributes.Builder()
+//                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build()
+                )
                 setDataSource(context, uri)
                 prepareAsync()
                 isLooping = isLoop
