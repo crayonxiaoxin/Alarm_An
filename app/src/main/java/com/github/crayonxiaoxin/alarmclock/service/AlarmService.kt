@@ -39,6 +39,7 @@ class AlarmService : Service(), IAlarmService {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.e("TAG", "onStartCommand: 111", )
         configForeground()  // 前台服务
         configReceiver()    // 广播接收
         return START_STICKY

@@ -41,13 +41,11 @@ class MainActivity : BaseActivity(), IMain {
     private val requestPermissions =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
             Log.e(TAG, "$it")
-            if (it[Manifest.permission.POST_NOTIFICATIONS] == true) { // 要有通知权限
-                val intent = Intent(this, AlarmService::class.java)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startForegroundService(intent)
-                } else {
-                    startService(intent)
-                }
+            val intent = Intent(this, AlarmService::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(intent)
+            } else {
+                startService(intent)
             }
         }
 
