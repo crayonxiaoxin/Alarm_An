@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">音乐闹钟</string>
+    <string name="empty">暂无数据</string>
+
+    <!--  刷新  -->
+    <string name="header_failed">刷新失败</string>
+    <string name="header_finish">刷新完成</string>
+    <string name="header_loading">等待底部加载完成…</string>
+    <string name="header_pulling">下拉可以刷新</string>
+    <string name="header_refreshing">正在刷新…</string>
+    <string name="header_release">释放立即刷新</string>
+    <string name="header_secondary">释放进入二楼</string>
+    <string name="header_update">上次更新 MM-dd HH:mm</string>
+
+    <string name="footer_failed">加载失败</string>
+    <string name="footer_finish">加载完成</string>
+    <string name="footer_loading">正在加载…</string>
+    <string name="footer_nothing">没有更多数据了</string>
+    <string name="footer_pulling">上拉加载更多</string>
+    <string name="footer_refreshing">等待头部刷新完成…</string>
+    <string name="footer_release">释放立即加载</string>
+
+    <!--  其他  -->
+    <string name="add_alarm">添加闹钟</string>
+    <string name="exit_press_one_more">再按一次退出程序</string>
+</resources>
