@@ -109,6 +109,8 @@ class AlarmAddFragment : BaseFragment() {
                     fmt = "yyyy-MM-dd HH:mm"
                 )
                 val timestamp = date?.time ?: 0
+                // todo: 可为 interval 赋值，拓展为重复闹钟
+                val interval = 0L
                 if (timestamp == 0L) {
                     toast("非法的日期时间")
                 } else {
@@ -124,9 +126,9 @@ class AlarmAddFragment : BaseFragment() {
                                 context = context,
                                 alarm = alarm!!.copy(
                                     timestamp = timestamp,
-                                    interval = 0,
+                                    interval = interval,
                                     uri = currentUri.toString(),
-                                    enable = if (timestamp >= now) 1 else 0
+                                    enable = if (timestamp >= now || interval > 0) 1 else 0
                                 ),
                             )
                             // 返回
@@ -140,7 +142,7 @@ class AlarmAddFragment : BaseFragment() {
                             Repository.setAlarm(
                                 context = context,
                                 timestamp = timestamp,
-                                interval = 0,
+                                interval = interval,
                                 uri = currentUri,
                                 enable = true,
                             ) {

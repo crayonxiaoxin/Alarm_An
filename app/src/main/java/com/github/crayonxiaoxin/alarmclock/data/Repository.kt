@@ -2,7 +2,6 @@ package com.github.crayonxiaoxin.alarmclock.data
 
 import android.content.Context
 import android.net.Uri
-import androidx.core.net.toUri
 import com.github.crayonxiaoxin.alarmclock.App
 import com.github.crayonxiaoxin.alarmclock.model.Alarm
 import com.github.crayonxiaoxin.alarmclock.receiver.AlarmReceiver
