@@ -40,7 +40,7 @@ class AlarmService : Service(), IAlarmService {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         configForeground()  // 前台服务
-        configReceiver()    // 短信接收
+        configReceiver()    // 广播接收
         return START_STICKY
     }
 

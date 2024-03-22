@@ -195,7 +195,6 @@ class AlarmAddFragment : BaseFragment() {
         }
         datePicker.addOnPositiveButtonClickListener {
             currentDate = Date(it).fmt("yyyy-MM-dd")
-            toast(currentDate)
             binding.date.setContent(currentDate)
         }
         timePicker.addOnCancelListener {
@@ -203,7 +202,6 @@ class AlarmAddFragment : BaseFragment() {
         }
         timePicker.addOnPositiveButtonClickListener {
             currentTime = "${timePicker.hour.toFixed()}:${timePicker.minute.toFixed()}"
-            toast(currentTime)
             binding.time.setContent(currentTime)
         }
         binding.date.setOnClickListener {
