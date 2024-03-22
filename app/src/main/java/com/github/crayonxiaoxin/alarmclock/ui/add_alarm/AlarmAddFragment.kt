@@ -4,22 +4,29 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupWindow
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.crayonxiaoxin.alarmclock.base.BaseFragment
 import com.github.crayonxiaoxin.alarmclock.data.Repository
 import com.github.crayonxiaoxin.alarmclock.databinding.FragmentAlarmAddBinding
+import com.github.crayonxiaoxin.alarmclock.databinding.PopupRepeatBinding
 import com.github.crayonxiaoxin.alarmclock.model.Alarm
+import com.github.crayonxiaoxin.alarmclock.model.RepeatType
 import com.github.crayonxiaoxin.alarmclock.ui.navigate
+import com.github.crayonxiaoxin.alarmclock.utils.FileUtil
 import com.github.crayonxiaoxin.alarmclock.utils.copyFile
 import com.github.crayonxiaoxin.alarmclock.utils.dateStr2Date
 import com.github.crayonxiaoxin.alarmclock.utils.fmt
 import com.github.crayonxiaoxin.alarmclock.utils.getFileNameFromUri
 import com.github.crayonxiaoxin.alarmclock.utils.toFixed
 import com.github.crayonxiaoxin.lib_common.global.toast
+import com.github.crayonxiaoxin.lib_common.utils.dp
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -48,13 +55,15 @@ class AlarmAddFragment : BaseFragment() {
     private var currentUri: Uri? = null
     private var currentDate: String = ""
     private var currentTime: String = ""
+    private var currentInterval: Long = 0L
+
     private var alarm: Alarm? = null
 
     private val pickFile = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
         it?.let {
-            Log.e(TAG, "pick uri: $it")
             currentUri = it
             val name = context.getFileNameFromUri(it)
+            Log.e(TAG, "pick uri: $it,${FileUtil.getFileName(requireContext(),it)}")
             binding.music.setContent(name)
         }
     }
@@ -82,6 +91,7 @@ class AlarmAddFragment : BaseFragment() {
                 currentDate = it.date()
                 currentTime = it.time()
                 currentUri = it.toUri()
+                currentInterval = it.interval
                 currentUri?.let {
                     val name = context.getFileNameFromUri(it)
                     binding.music.setContent(name)
@@ -97,6 +107,7 @@ class AlarmAddFragment : BaseFragment() {
 
         initDateTimePicker()
         initMusicPicker()
+        initRepeatPicker()
 
         binding.close.setOnClickListener {
             navigate?.back()
@@ -109,8 +120,8 @@ class AlarmAddFragment : BaseFragment() {
                     fmt = "yyyy-MM-dd HH:mm"
                 )
                 val timestamp = date?.time ?: 0
-                // todo: 可为 interval 赋值，拓展为重复闹钟
-                val interval = 0L
+                // 可为 interval 赋值，拓展为重复闹钟
+                val interval = currentInterval
                 if (timestamp == 0L) {
                     toast("非法的日期时间")
                 } else {
@@ -159,10 +170,36 @@ class AlarmAddFragment : BaseFragment() {
         }
     }
 
+
     // 将文件保存到 app data 中，防止 uri 权限过期
     private fun saveFile2Local() {
         context?.let {
             currentUri = it.copyFile(currentUri) ?: currentUri
+        }
+    }
+
+    // 选择重复类型
+    private fun initRepeatPicker() {
+        binding.repeat.setContent(Alarm.repeatType(currentInterval))
+        val popupBinding = PopupRepeatBinding.inflate(layoutInflater, null, false)
+        val popupWindow = PopupWindow(
+            popupBinding.root,
+            200.dp,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        binding.repeat.setOnClickListener {
+            val adapter = RepeatTypeAdapter(currentInterval).apply {
+                setOnItemClickListener { _, data, _ ->
+                    currentInterval = data.interval
+                    binding.repeat.setContent(Alarm.repeatType(currentInterval))
+                    popupWindow.dismiss()
+                }
+            }
+            popupBinding.repeatRecyclerview.layoutManager = LinearLayoutManager(requireContext())
+            popupBinding.repeatRecyclerview.adapter = adapter
+            adapter.submitList(Alarm.repeatTypeList())
+            popupWindow.showAsDropDown(binding.repeat, (-20).dp, (-50).dp, Gravity.END)
         }
     }
 

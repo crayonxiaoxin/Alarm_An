@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.util.Log
 import android.webkit.MimeTypeMap
 import androidx.core.content.FileProvider
@@ -20,7 +21,6 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-import java.net.URLDecoder
 
 
 object FileUtil {
@@ -142,9 +142,12 @@ object FileUtil {
                     _e("TAG", "getRealPathFromUriAboveApi19: document image $filePath")
                 }
             } else if (isDownloadsDocument(uri)) { // DownloadsProvider
+                val matches = Regex("[0-9]+").find(documentId)?.value ?: "0"
+                _e("TAG", "isDownloadsDocument: $documentId,${matches},${uri.path}")
+
                 val contentUri = ContentUris.withAppendedId(
                     Uri.parse("content://downloads/public_downloads"),
-                    java.lang.Long.valueOf(documentId)
+                    java.lang.Long.valueOf(matches)
                 )
                 filePath = getDataColumn(context, contentUri, null, null)
             } else {
@@ -206,6 +209,22 @@ object FileUtil {
      */
     private fun isDownloadsDocument(uri: Uri): Boolean {
         return "com.android.providers.downloads.documents" == uri.authority
+    }
+
+    fun getFileName(context: Context, uri: Uri?): String {
+        if (uri == null) return ""
+        var cursor: Cursor? = null
+        try {
+            cursor = context.contentResolver.query(uri, null, null, null, null)
+            if (cursor != null && cursor.moveToFirst()) {
+                val columnIndex = cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME)
+                return cursor.getString(columnIndex)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            cursor?.close()
+        }
+        return ""
     }
 }
 
@@ -387,7 +406,7 @@ fun Long.spaceFmt(): String {
 
 fun Context?.getFileNameFromUri(uri: Uri): String {
     if (this == null) return ""
-    var name = FileUtil.getRealPathFromUri(this, uri) ?: ""
+    var name = FileUtil.getFileName(this, uri)
     name = if (name.isEmpty()) {
         Uri.decode(uri.toString()).split("/").last()
     } else {

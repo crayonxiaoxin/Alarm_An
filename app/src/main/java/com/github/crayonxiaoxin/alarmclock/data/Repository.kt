@@ -35,11 +35,16 @@ object Repository {
             val alarm = alarmDao.get(insertIds[0].toInt())
             if (alarm != null) {
                 val requestCode = alarm.requestCode()
+                val now = System.currentTimeMillis()
+                val newTimestamp = if (alarm.timestamp < now && interval > 0) {
+                    // 已过期且是重复闹钟，设置下一个周期
+                    timestamp + interval
+                } else timestamp
                 // 设置闹钟
                 AlarmReceiver.setAlarmClock(
                     context = context,
-                    timestamp = timestamp,
-                    interval = 0,
+                    timestamp = newTimestamp,
+                    interval = interval,
                     musicUri = uri,
                     requestCode = requestCode,
                 )
@@ -60,11 +65,20 @@ object Repository {
         alarmDao.update(alarm)
         if (alarm.isEnable()) {
             val now = System.currentTimeMillis()
-            if (alarm.timestamp >= now) {
+            if (alarm.timestamp >= now) { // 超过当前时间，即：未过期
                 // 设置闹钟
                 AlarmReceiver.setAlarmClock(
                     context = context,
                     timestamp = alarm.timestamp,
+                    interval = alarm.interval,
+                    musicUri = alarm.toUri(),
+                    requestCode = requestCode,
+                )
+            } else if (alarm.interval > 0) { // 已过期，但是是重复闹钟
+                // 设置闹钟，从下一个周期开始
+                AlarmReceiver.setAlarmClock(
+                    context = context,
+                    timestamp = alarm.timestamp + alarm.interval,
                     interval = alarm.interval,
                     musicUri = alarm.toUri(),
                     requestCode = requestCode,

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+
+        <variable
+            name="selected"
+            type="Long" />
+
+        <variable
+            name="repeat"
+            type="com.github.crayonxiaoxin.alarmclock.model.RepeatType" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ripple"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/dp_20"
+        android:paddingVertical="@dimen/dp_20">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@{repeat.label}"
+            android:textSize="@dimen/dp_16"
+            tools:text="标题" />
+
+        <ImageView
+            android:visibility="@{(selected==repeat.interval)?View.VISIBLE:View.GONE}"
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:src="@drawable/ic_tick" />
+
+    </LinearLayout>
+</layout>

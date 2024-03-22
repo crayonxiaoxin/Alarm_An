@@ -65,6 +65,7 @@
                     android:id="@+id/date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:cs_show_right_icon="false"
                     app:cs_has_sep="true"
                     app:cs_sub_title=""
                     app:cs_title="日期" />
@@ -74,6 +75,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:cs_has_sep="true"
+                    app:cs_show_right_icon="false"
                     app:cs_sub_title=""
                     app:cs_title="时间" />
 
@@ -85,6 +87,14 @@
                     app:cs_sub_title=""
                     app:cs_title="音乐" />
 
+                <com.github.crayonxiaoxin.alarmclock.widgets.CustomSettingView
+                    android:id="@+id/repeat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cs_has_sep="false"
+                    app:cs_show_right_icon="false"
+                    app:cs_sub_title=""
+                    app:cs_title="重复" />
 
             </LinearLayout>
         </ScrollView>

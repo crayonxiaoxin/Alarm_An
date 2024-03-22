@@ -36,12 +36,33 @@ data class Alarm(
     fun requestCode(): Int = id + requestCodeDiff()
     fun content(): String = "已到达提醒时间 ${datetime()}"
 
+    fun repeatType(): String {
+        return Companion.repeatType(interval)
+    }
+
     companion object {
         private fun requestCodeDiff(): Int = 1000
         fun idFromRequestCode(requestCode: Int): Int {
             val id = requestCode - requestCodeDiff()
             if (id > 0) return id
             return 0
+        }
+
+        fun repeatType(interval: Long): String {
+            return repeatTypeList().find { it.interval == interval }?.label ?: ""
+        }
+
+        fun repeatTypeList(): List<RepeatType> {
+            return listOf(
+                RepeatType(interval = 0, label = "只响一次"),
+                RepeatType(interval = 1000 * 60 * 10, label = "每 10 分钟"),
+                RepeatType(interval = 1000 * 60 * 20, label = "每 20 分钟"),
+                RepeatType(interval = 1000 * 60 * 30, label = "每 30 分钟"),
+                RepeatType(interval = 1000 * 60 * 60 * 1, label = "每 1 小时"),
+                RepeatType(interval = 1000 * 60 * 60 * 6, label = "每 6 小时"),
+                RepeatType(interval = 1000 * 60 * 60 * 12, label = "每 12 小时"),
+                RepeatType(interval = 1000 * 60 * 60 * 24, label = "每天"),
+            )
         }
     }
 }
