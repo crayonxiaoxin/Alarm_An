@@ -51,7 +51,7 @@ class AlarmService : Service(), IAlarmService {
             }
         )
         val notification = NotificationUtil.show(
-            title = "AlarmClock 運行中",
+            title = "前台服务运行中",
             autoCancel = false,
             contentIntent = pi,
             show = false
