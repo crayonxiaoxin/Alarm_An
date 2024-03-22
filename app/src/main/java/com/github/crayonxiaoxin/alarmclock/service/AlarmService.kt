@@ -39,7 +39,7 @@ class AlarmService : Service(), IAlarmService {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.e("TAG", "onStartCommand: 111", )
+        Log.e("TAG", "onStartCommand: 111")
         configForeground()  // 前台服务
         configReceiver()    // 广播接收
         return START_STICKY
@@ -94,7 +94,7 @@ class AlarmService : Service(), IAlarmService {
                         } else {
                             intent.getParcelableExtra(EXTRA_ALARM_MUSIC_URI) as? Uri
                         }
-                        Log.e(TAG, "onReceive: uri => $musicUri" )
+                        Log.e(TAG, "onReceive: uri => $musicUri")
                         // 播放音乐
                         musicUri?.let {
                             AudioManager.playMp3FromUri(context, musicUri, true)
@@ -155,7 +155,11 @@ class AlarmService : Service(), IAlarmService {
                     binding.cancel.setOnClickListener {
                         windowManager.removeView(binding.root)
                         alarmServiceScope.launch {
-                            Repository.updateAlarm(this@AlarmService, alarm.copy(enable = 0))
+                            if (alarm.interval == 0L) { // 不重复闹钟才关闭，重复闹钟依然保持开启
+                                Repository.updateAlarm(this@AlarmService, alarm.copy(enable = 0))
+                            } else { // 只需要移除 notification 和 停止音乐
+                                Repository.removeNotificationAndMusicOnly(alarm)
+                            }
                         }
                     }
                     windowManager.addView(binding.root, layoutParams)

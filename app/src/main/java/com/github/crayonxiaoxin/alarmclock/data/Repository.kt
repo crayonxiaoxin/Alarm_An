@@ -60,7 +60,6 @@ object Repository {
 
     // 更新闹钟
     suspend fun updateAlarm(context: Context?, alarm: Alarm) {
-        val requestCode = alarm.requestCode()
         // 更新 Alarm
         alarmDao.update(alarm)
         if (alarm.isEnable()) {
@@ -72,7 +71,7 @@ object Repository {
                     timestamp = alarm.timestamp,
                     interval = alarm.interval,
                     musicUri = alarm.toUri(),
-                    requestCode = requestCode,
+                    requestCode = alarm.requestCode(),
                 )
             } else if (alarm.interval > 0) { // 已过期，但是是重复闹钟
                 // 设置闹钟，从下一个周期开始
@@ -81,13 +80,13 @@ object Repository {
                     timestamp = alarm.timestamp + alarm.interval,
                     interval = alarm.interval,
                     musicUri = alarm.toUri(),
-                    requestCode = requestCode,
+                    requestCode = alarm.requestCode(),
                 )
             } else {
-                cancelAlarm(context, alarm, requestCode)
+                cancelAlarm(context, alarm)
             }
         } else {
-            cancelAlarm(context, alarm, requestCode)
+            cancelAlarm(context, alarm)
         }
     }
 
@@ -95,19 +94,25 @@ object Repository {
     private fun cancelAlarm(
         context: Context?,
         alarm: Alarm,
-        requestCode: Int
     ) {
         AlarmReceiver.unsetAlarmClock(
             context = context,
             musicUri = alarm.toUri(),
-            requestCode = requestCode
+            requestCode = alarm.requestCode()
+        )
+    }
+
+    // 仅取消通知和音乐
+    fun removeNotificationAndMusicOnly(alarm: Alarm) {
+        AlarmReceiver.removeNotify(
+            musicUri = alarm.toUri(),
+            requestCode = alarm.requestCode()
         )
     }
 
     // 删除闹钟
     suspend fun unsetAlarm(context: Context?, alarm: Alarm) {
-        val requestCode = alarm.requestCode()
-        cancelAlarm(context, alarm, requestCode)
+        cancelAlarm(context, alarm)
         // 删除记录
         alarmDao.delete(alarm)
         context.toast("已取消闹钟")

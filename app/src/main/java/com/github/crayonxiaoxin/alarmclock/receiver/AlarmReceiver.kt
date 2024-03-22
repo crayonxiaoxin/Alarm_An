@@ -117,15 +117,24 @@ open class AlarmReceiver : BroadcastReceiver() {
                     if (pendingIntent != null) {
                         // 取消任务
                         alarmManager.cancel(pendingIntent)
-                        // 取消音乐
-                        musicUri?.let {
-                            AudioManager.stopMp3()
-                        }
-                        // 取消通知
-                        NotificationUtil.hide(requestCode)
+                        // 取消通知和响铃
+                        removeNotify(musicUri, requestCode)
                     }
                 }
             }
+        }
+
+        // 取消通知和响铃
+        fun removeNotify(
+            musicUri: Uri? = null,
+            requestCode: Int = 0,
+        ) {
+            // 取消音乐
+            musicUri?.let {
+                AudioManager.stopMp3()
+            }
+            // 取消通知
+            NotificationUtil.hide(requestCode)
         }
     }
 
